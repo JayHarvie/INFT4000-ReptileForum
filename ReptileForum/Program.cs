@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ReptileForum.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<ReptileForumContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ReptileForumContext") ?? throw new InvalidOperationException("Connection string 'ReptileForumContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

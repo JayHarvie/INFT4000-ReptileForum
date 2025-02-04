@@ -54,32 +54,32 @@ namespace ReptileForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFilename,CreateDate")] Discussion discussion)
+        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,CreateDate,ImageFile")] Discussion discussion)
         {
+            discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile?.FileName);
+
             if (ModelState.IsValid)
             {
                 _context.Add(discussion);
                 await _context.SaveChangesAsync();
+
+                if (discussion.ImageFile != null)
+                {
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await discussion.ImageFile.CopyToAsync(stream);
+                    }
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+
+
             return View(discussion);
         }
 
-        // GET: Discussions/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var discussion = await _context.Discussion.FindAsync(id);
-            if (discussion == null)
-            {
-                return NotFound();
-            }
-            return View(discussion);
-        }
 
         // POST: Discussions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.

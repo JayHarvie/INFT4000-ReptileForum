@@ -8,15 +8,15 @@ namespace ReptileForum.Models
         // Primary Key
         public int DiscussionId { get; set; }
 
-        public required string Title { get; set; }
-        public required string Content { get; set; }
-        public required string ImageFilename { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
+        public string ImageFilename { get; set; } = string.Empty;
 
         // Property for file upload not mapped in EF
         [NotMapped]
         [Display(Name = "Photograph")]
         public IFormFile? ImageFile { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.Now;
 
         // Navigation Property: One-to-Many Relationship with Comments
         public List<Comment> Comments { get; set; } = new List<Comment>();

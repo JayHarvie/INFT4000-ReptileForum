@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReptileForum.Data;
 using ReptileForum.Models;
@@ -52,10 +47,12 @@ namespace ReptileForum.Controllers
         // POST: Discussions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Discussions/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,CreateDate,ImageFile")] Discussion discussion)
         {
+            // rename the uploaded file to a guid (unique filename). Set before photo saved in database.
             discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile?.FileName);
 
             if (ModelState.IsValid)
@@ -63,22 +60,22 @@ namespace ReptileForum.Controllers
                 _context.Add(discussion);
                 await _context.SaveChangesAsync();
 
+                // Save the uploaded file after the photo is saved in the database.
                 if (discussion.ImageFile != null)
                 {
                     string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        await discussion.ImageFile.CopyToAsync(stream);
+                        await discussion.ImageFile.CopyToAsync(fileStream);
                     }
                 }
 
+                // Re-direct to Index
                 return RedirectToAction(nameof(Index));
             }
 
-
             return View(discussion);
         }
-
 
 
         // POST: Discussions/Edit/5

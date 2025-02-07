@@ -71,7 +71,7 @@ namespace ReptileForum.Controllers
                 }
 
                 // Re-direct to Index
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
 
             return View(discussion);

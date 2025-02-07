@@ -45,7 +45,7 @@ namespace ReptileForum.Controllers
             {
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Discussions");
+                return RedirectToAction("Index", "Home");
             }
             ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId", comment.DiscussionId);
             return View(comment);

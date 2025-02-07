@@ -1,8 +1,41 @@
-﻿@{
+﻿@model IEnumerable<ReptileForum.Models.Discussion>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mb-4">
+    <h1 class="display-4">Welcome to Reptile Forum</h1>
+    <p>Discuss and share your knowledge about reptiles! 🦎</p>
+</div>
+
+<!-- Button to create a new discussion -->
+<div class="text-center mb-4">
+    <a asp-action="Create" asp-controller="Discussions" class="btn btn-success">Create New Discussion</a>
+</div>
+
+<h2>Latest Discussions</h2>
+
+<div class="list-group">
+    @foreach (var discussion in Model)
+    {
+        <a asp-action="GetDiscussion" asp-route-id="@discussion.DiscussionId" class="list-group-item list-group-item-action d-flex align-items-center">
+            <div class="me-3">
+                @if (!string.IsNullOrEmpty(discussion.ImageFilename))
+                {
+                    <img src="~/Images/@discussion.ImageFilename" alt="Discussion Image" class="img-thumbnail" style="width: 80px; height: auto; border-radius: 5px;" />
+                }
+                else
+                {
+                    <span>No Image</span>
+                }
+            </div>
+
+            <div>
+                <h5 class="mb-1">@discussion.Title</h5>
+                <p class="mb-1">💬 Comments: @discussion.Comments.Count</p>
+                <small class="text-muted">📅 @discussion.CreateDate.ToString("yyyy-MM-dd HH:mm")</small>
+            </div>
+        </a>
+    }
 </div>

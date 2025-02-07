@@ -17,7 +17,11 @@ namespace ReptileForum.Controllers
         // GET: Discussions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Discussion.ToListAsync());
+            var discussions = await _context.Discussion
+                    .Include(d => d.Comments) 
+                    .ToListAsync();
+
+            return View(discussions);
         }
 
         // GET: Discussions/Details/5
@@ -52,17 +56,23 @@ namespace ReptileForum.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,CreateDate,ImageFile")] Discussion discussion)
         {
-            // rename the uploaded file to a guid (unique filename). Set before photo saved in database.
-            discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile?.FileName);
-
             if (ModelState.IsValid)
             {
                 _context.Add(discussion);
                 await _context.SaveChangesAsync();
 
-                // Save the uploaded file after the photo is saved in the database.
-                if (discussion.ImageFile != null)
+                // Check if the user uploaded an image
+                if (discussion.ImageFile == null)
                 {
+                    // If no image is uploaded, assign a placeholder image
+                    discussion.ImageFilename = "placeholder-image.jpg";
+                }
+                else
+                {
+                    // If an image is uploaded, rename the uploaded file to a guid (unique filename)
+                    discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
+
+                    // Save the uploaded file
                     string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
@@ -75,6 +85,23 @@ namespace ReptileForum.Controllers
             }
 
             return View(discussion);
+        }
+
+        // GET: Discussions/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var discussion = await _context.Discussion.FindAsync(id);
+            if (discussion == null)
+            {
+                return NotFound();
+            }
+
+            return View(discussion); // Pass the discussion to the view
         }
 
 

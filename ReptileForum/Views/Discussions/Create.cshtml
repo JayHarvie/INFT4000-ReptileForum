@@ -4,41 +4,47 @@
     ViewData["Title"] = "Create";
 }
 
-<h4>Create Discussion</h4>
+<h4 class="text-center mb-4">Create Discussion</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+<!-- Center the form and apply Bootstrap grid for better layout -->
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Title field -->
             <div class="mb-3">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
+                <label asp-for="Title" class="form-label">Discussion Title</label>
+                <input asp-for="Title" class="form-control" placeholder="Enter the title" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
+            <!-- Content field -->
             <div class="mb-3">
-                <label asp-for="Content" class="control-label"></label>
-                <textarea asp-for="Content" class="form-control"></textarea>
+                <label asp-for="Content" class="form-label">Content</label>
+                <textarea asp-for="Content" class="form-control" placeholder="Write your discussion content here"></textarea>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
 
             <!-- Image file upload -->
             <div class="mb-3">
-                <label asp-for="ImageFile" class="form-label"></label>
+                <label asp-for="ImageFile" class="form-label">Upload an Image (Optional)</label>
                 <input asp-for="ImageFile" type="file" class="form-control" />
                 <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <!-- Submit button -->
+            <div class="mb-3 text-center">
+                <input type="submit" value="Create Discussion" class="btn btn-success w-100" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index" asp-controller="Home">Back to Discussions</a>
+<!-- Back link to discussions -->
+<div class="text-center mt-3">
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Discussions</a>
 </div>
 
 @section Scripts {

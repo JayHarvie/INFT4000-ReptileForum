@@ -4,34 +4,52 @@
     ViewData["Title"] = Model.Title;
 }
 
-<div class="container">
-    <h2>@Model.Title</h2>
-    <p><strong>Created on:</strong> @Model.CreateDate.ToString("yyyy-MM-dd HH:mm")</p>
+<div class="container mt-5">
+    <!-- Center the content in a row -->
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Discussion Title -->
+            <h2 class="text-center mb-4">@Model.Title</h2>
 
-    <!-- Display Image -->
-    @if (!string.IsNullOrEmpty(Model.ImageFilename))
-    {
-        <img src="~/Images/@Model.ImageFilename" alt="Discussion Image" class="img-fluid mb-3" style="max-width: 400px; border-radius: 5px;" />
-    }
+            <!-- Discussion Date -->
+            <p class="text-center text-muted mb-4"><strong>Created on:</strong> @Model.CreateDate.ToString("yyyy-MM-dd HH:mm")</p>
 
-    <p>@Model.Content</p>
+            <!-- Display Image -->
+            @if (!string.IsNullOrEmpty(Model.ImageFilename))
+            {
+                <div class="text-center mb-4">
+                    <img src="~/Images/@Model.ImageFilename" onerror="this.src='/Images/placeholder-image.jpg'" class="img-fluid" style="max-width: 100%; border-radius: 8px;" />
+                </div>
+            }
 
-    <!-- Link to Create a New Comment -->
-    <a asp-action="Create" asp-controller="Comments" asp-route-discussionId="@Model.DiscussionId" class="btn btn-primary mb-3">
-        ➕ Add a Comment
-    </a>
+            <!-- Discussion Content -->
+            <div class="text-center mb-4">
+                <p>@Model.Content</p>
+            </div>
 
-    <h4>Comments (💬 @Model.Comments.Count)</h4>
-    <ul class="list-group">
-        @foreach (var comment in Model.Comments)
-        {
-            <li class="list-group-item">
-                <p>@comment.Content</p>
-                <small class="text-muted">Posted on @comment.CreateDate.ToString("yyyy-MM-dd HH:mm")</small>
-            </li>
-        }
-    </ul>
+            <!-- Add Comment Button -->
+            <div class="mb-4 text-center">
+                <a asp-action="Create" asp-controller="Comments" asp-route-discussionId="@Model.DiscussionId" class="btn btn-success">
+                    ➕ Add a Comment
+                </a>
+            </div>
 
-    <br />
-    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Discussions</a>
+            <!-- Comments Section -->
+            <h4 class="mb-3">Comments (💬 @Model.Comments.Count)</h4>
+            <ul class="list-group mb-5">
+                @foreach (var comment in Model.Comments)
+                {
+                    <li class="list-group-item mb-3">
+                        <p>@comment.Content</p>
+                        <small class="text-muted">Posted on @comment.CreateDate.ToString("yyyy-MM-dd HH:mm")</small>
+                    </li>
+                }
+            </ul>
+
+            <!-- Back to Discussions Link -->
+            <div class="text-center">
+                <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Discussions</a>
+            </div>
+        </div>
+    </div>
 </div>

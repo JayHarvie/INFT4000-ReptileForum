@@ -10,42 +10,45 @@
             <h4 class="mb-0">Discussion Information</h4>
         </div>
         <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.Title)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Title)
-                </dd>
+            <div class="row">
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-3 font-weight-bold">
+                            @Html.DisplayNameFor(model => model.Title)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Title)
+                        </dd>
 
-                <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.Content)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Content)
-                </dd>
+                        <dt class="col-sm-3 font-weight-bold">
+                            @Html.DisplayNameFor(model => model.Content)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Content)
+                        </dd>
 
-                <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.ImageFilename)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.ImageFilename)
-                </dd>
-
-                <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.CreateDate)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.CreateDate)
-                </dd>
-            </dl>
+                        <dt class="col-sm-3 font-weight-bold">
+                            @Html.DisplayNameFor(model => model.CreateDate)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.CreateDate)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4 text-center">
+                    @if (!string.IsNullOrEmpty(Model.ImageFilename))
+                    {
+                        <img src="~/Images/@Model.ImageFilename" class="img-fluid rounded-start" style="max-width: 100px; height: auto;" />
+                    }
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="d-flex justify-content-start mt-4">
         <div class="ml-4">
             <a asp-action="Edit" asp-route-id="@Model?.DiscussionId" class="btn btn-warning btn-sm">Edit</a>
-            <a asp-action="Index" class="btn btn-secondary btn-sm">Back to List</a>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">Back to My Discussions</a>
         </div>
     </div>
 </div>

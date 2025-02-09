@@ -18,7 +18,8 @@ namespace ReptileForum.Controllers
         public async Task<IActionResult> Index()
         {
             var discussions = await _context.Discussion
-                    .Include(d => d.Comments) 
+                    .Include(d => d.Comments)
+                    .OrderByDescending(d => d.CreateDate)
                     .ToListAsync();
 
             return View(discussions);

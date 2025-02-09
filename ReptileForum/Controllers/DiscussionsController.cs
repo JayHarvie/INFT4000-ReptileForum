@@ -58,8 +58,6 @@ namespace ReptileForum.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(discussion);
-                await _context.SaveChangesAsync();
 
                 // Check if the user uploaded an image
                 if (discussion.ImageFile == null)
@@ -79,6 +77,9 @@ namespace ReptileForum.Controllers
                         await discussion.ImageFile.CopyToAsync(fileStream);
                     }
                 }
+
+                _context.Add(discussion);
+                await _context.SaveChangesAsync();
 
                 // Re-direct to Index
                 return RedirectToAction("Index", "Home");

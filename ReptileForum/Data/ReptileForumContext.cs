@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using ReptileForum.Models;
 
 namespace ReptileForum.Data
 {
-    public class ReptileForumContext : DbContext
+    public class ReptileForumContext : IdentityDbContext
     {
         public ReptileForumContext (DbContextOptions<ReptileForumContext> options)
             : base(options)

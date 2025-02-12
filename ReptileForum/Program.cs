@@ -1,9 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ReptileForum.Data;
+using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ReptileForumContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ReptileForumContext") ?? throw new InvalidOperationException("Connection string 'ReptileForumContext' not found.")));
+
+// JH - Changed RequireConfirmedAccount to false
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ReptileForumContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -30,5 +34,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// JH - Added Razor Pages to app
+app.MapRazorPages().WithStaticAssets();
 
 app.Run();

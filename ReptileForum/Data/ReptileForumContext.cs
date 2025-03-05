@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ReptileForum.Data
 {
-    public class ReptileForumContext : IdentityDbContext
+    public class ReptileForumContext : IdentityDbContext<ApplicationUser>
     {
         public ReptileForumContext (DbContextOptions<ReptileForumContext> options)
             : base(options)

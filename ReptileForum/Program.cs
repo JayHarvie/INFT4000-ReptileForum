@@ -7,7 +7,7 @@ builder.Services.AddDbContext<ReptileForumContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ReptileForumContext") ?? throw new InvalidOperationException("Connection string 'ReptileForumContext' not found.")));
 
 // JH - Changed RequireConfirmedAccount to false
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ReptileForumContext>();
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ReptileForumContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

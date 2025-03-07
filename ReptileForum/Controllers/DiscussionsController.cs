@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using ReptileForum.Data;
 using ReptileForum.Models;
@@ -64,9 +65,8 @@ namespace ReptileForum.Controllers
                 if (discussion.ImageFile == null)
                 {
                     // If no image is uploaded, assign a placeholder image
-                    discussion.ImageFilename = "placeholder-image.jpg";
-                }
-                else
+                    discussion.ImageFilename = "Reptile-placeholder.png";
+                } else
                 {
                     // If an image is uploaded, rename the uploaded file to a guid (unique filename)
                     discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
@@ -77,7 +77,7 @@ namespace ReptileForum.Controllers
                     {
                         await discussion.ImageFile.CopyToAsync(fileStream);
                     }
-                }
+                } 
 
                 _context.Add(discussion);
                 await _context.SaveChangesAsync();

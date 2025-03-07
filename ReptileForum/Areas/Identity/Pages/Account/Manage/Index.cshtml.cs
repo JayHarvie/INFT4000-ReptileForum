@@ -3,6 +3,7 @@
 #nullable disable
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -26,36 +27,26 @@ namespace ReptileForum.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string Username { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Full name")]
+            public string Name { get; set; }
+            public string Location { get; set; }
+            public string ImageFilename { get; set; }
+
+            [Display(Name = "Profile Picture")]
+            public IFormFile ImageFile { get; set; }
+
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
@@ -70,6 +61,9 @@ namespace ReptileForum.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
+                Name = user.Name,
+                Location = user.Location,
+                ImageFilename = user.ImageFilename,
                 PhoneNumber = phoneNumber
             };
         }
@@ -110,6 +104,43 @@ namespace ReptileForum.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
+
+            //
+            // BEGIN: ApplicationUser custom fields
+            //
+
+            if (Input.Name != user.Name)
+            {
+                user.Name = Input.Name;
+            }
+
+            if (Input.Location != user.Location)
+            {
+                user.Location = Input.Location;
+            }
+
+            // Save the uploaded file after the photo is saved in the database.
+            if (Input.ImageFile != null)
+            {
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(Input.ImageFile?.FileName);
+
+                // part 1: save the file
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "profile_img", fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await Input.ImageFile.CopyToAsync(fileStream);
+                }
+
+                /// part 2: update record with filename
+                user.ImageFilename = fileName;
+            }
+
+            await _userManager.UpdateAsync(user);
+
+            //
+            // END: ApplicationUser custom fields
+            //
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

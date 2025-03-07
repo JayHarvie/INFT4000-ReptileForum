@@ -71,6 +71,22 @@ namespace ReptileForum.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            //
+            // BEGIN: ApplicationUser custom fields
+            //
+
+            [Required]
+            [Display(Name = "Full name")]
+            public string Name { get; set; }
+
+            [Display(Name = "Profile Picture")]
+            public IFormFile ImageFile { get; set; }
+            public string Location { get; set; }
+
+            //
+            // END: ApplicationUser custom fields
+            //
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -114,6 +130,37 @@ namespace ReptileForum.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+
+                //
+                // BEGIN: ApplicationUser custom fields
+                //
+
+                user.Name = Input.Name;
+                user.Location = Input.Location;
+
+                // Save the uploaded file after the photo is saved in the database.
+                if (Input.ImageFile != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(Input.ImageFile?.FileName);
+
+                    // part 1: save the file
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "profile_img", fileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await Input.ImageFile.CopyToAsync(fileStream);
+                    }
+
+                    /// part 2: update record with filename
+                    user.ImageFilename = fileName;
+                } else
+                {
+                    user.ImageFilename = "PlaceholderPFP.jpg";
+                }
+
+                //
+                // END: ApplicationUser custom fields
+                //
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

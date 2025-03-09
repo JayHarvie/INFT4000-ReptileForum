@@ -11,20 +11,28 @@
             <!-- Discussion Title -->
             <h2 class="text-center mb-4">@Model.Title</h2>
 
-            <!-- Discussion Date -->
-            <p class="text-center text-muted mb-4"><strong>Created on:</strong> @Model.CreateDate.ToString("yyyy-MM-dd HH:mm")</p>
+            <!-- Discussion Image -->
+            @if (!string.IsNullOrEmpty(Model.ImageFilename))
+            {
+                <div class="text-center mb-4">
+                    <img src="~/Images/@Model.ImageFilename"
+                         alt="Discussion Image"
+                         style="width: 400px; height: 300px; object-fit: cover; border-radius: 10px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);" />
+                </div>
+            }
 
-            <!-- Display Image and Author Name (Main Discussion) -->
-            <div class="d-flex justify-content-center mb-4">
-                @if (Model.ApplicationUser != null)
-                {
-                    <img src="~/profile_img/@Model.ApplicationUser.ImageFilename" class="img-thumbnail" />
-                    <p class="align-self-center">
-                        <!-- Make the username clickable and link to their profile -->
-                        <a asp-action="Profile" asp-route-id="@Model.ApplicationUser.Id">@Model.ApplicationUser.Name</a>
+            <!-- Display Author Info (Main Discussion) -->
+            @if (Model.ApplicationUser != null)
+            {
+                <div class="d-flex align-items-center mb-4">
+                    <img src="~/profile_img/@Model.ApplicationUser.ImageFilename"
+                         alt="Profile Picture"
+                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; border: 2px solid #ddd; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); margin-right: 10px;" />
+                    <p class="mb-0">
+                        <a asp-action="Profile" asp-route-id="@Model.ApplicationUser.Id" class="fw-bold">@Model.ApplicationUser.Name</a>
                     </p>
-                }
-            </div>
+                </div>
+            }
 
             <!-- Discussion Content -->
             <div class="text-center mb-4">
@@ -45,8 +53,11 @@
                 {
                     <li class="list-group-item mb-3">
                         <!-- Comment Author Info -->
-                        <div class="d-flex mb-2">
-                            <a asp-action="Profile" asp-route-id="@comment.ApplicationUser.Id">@comment.ApplicationUser.Name</a>
+                        <div class="d-flex align-items-center mb-2">
+                            <img src="~/profile_img/@comment.ApplicationUser.ImageFilename"
+                                 alt="Comment Author Picture"
+                                 style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 1px solid #ddd; margin-right: 8px;" />
+                            <a asp-action="Profile" asp-route-id="@comment.ApplicationUser.Id" class="fw-bold">@comment.ApplicationUser.Name</a>
                         </div>
 
                         <!-- Comment Content -->

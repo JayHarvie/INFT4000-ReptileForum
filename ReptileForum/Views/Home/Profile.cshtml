@@ -5,26 +5,53 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+        <div class="col-md-8 col-lg-6 text-center">
             <!-- User Profile Image and Name -->
-            <div class="d-flex justify-content-center mb-4">
-                @if (user.ImageFilename != null)
+            <div class="d-flex flex-column align-items-center mb-4">
+                @if (!string.IsNullOrEmpty(user.ImageFilename))
                 {
-                    <img src="~/profile_img/@user.ImageFilename" class="img-thumbnail" />
+                    <img src="~/profile_img/@user.ImageFilename"
+                         class="rounded-circle shadow"
+                         style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #ddd;" />
                 }
-                <h2 class="align-self-center">@user.Name</h2>
+                <h2 class="mt-3">@user.Name</h2>
+
+                <!-- Display user location if available -->
+                @if (!string.IsNullOrEmpty(user.Location))
+                {
+                    <p class="text-muted"><i class="bi bi-geo-alt-fill"></i>Location: @user.Location</p>
+                }
             </div>
 
             <!-- User Discussions -->
             <h4 class="mb-3">Discussions Started</h4>
-            <ul class="list-group mb-5">
-                @foreach (var discussion in discussions)
-                {
-                    <li class="list-group-item">
-                        <a asp-action="GetDiscussion" asp-route-id="@discussion.DiscussionId">@discussion.Title</a>
-                    </li>
-                }
-            </ul>
+            @if (discussions.Any())
+            {
+                <div class="list-group">
+                    @foreach (var discussion in discussions)
+                    {
+                        <a asp-action="GetDiscussion" asp-route-id="@discussion.DiscussionId" class="list-group-item list-group-item-action">
+                            <div class="d-flex align-items-center">
+                                <!-- Thumbnail of Discussion Image -->
+                                @if (!string.IsNullOrEmpty(discussion.ImageFilename))
+                                {
+                                    <img src="~/Images/@discussion.ImageFilename"
+                                         class="rounded"
+                                         style="width: 80px; height: 60px; object-fit: cover; margin-right: 15px;" />
+                                }
+
+                                <div>
+                                    <h6 class="mb-0">@discussion.Title</h6>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No discussions started yet.</p>
+            }
         </div>
     </div>
 </div>

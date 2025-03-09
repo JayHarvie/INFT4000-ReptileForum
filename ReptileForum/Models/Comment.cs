@@ -1,4 +1,6 @@
-﻿namespace ReptileForum.Models
+﻿using ReptileForum.Data;
+
+namespace ReptileForum.Models
 {
     public class Comment
     {
@@ -13,5 +15,10 @@
 
         // Navigation Property: Reference to Discussion
         public Discussion? Discussion { get; set; } // Nullable
+
+        public string ApplicationUserId { get; set; } = string.Empty; // Foreign Key
+
+        // Navigation Property: Reference to ApplicationUser
+        public ApplicationUser? ApplicationUser { get; set; } // nullable
     }
 }

@@ -14,13 +14,17 @@
             <!-- Discussion Date -->
             <p class="text-center text-muted mb-4"><strong>Created on:</strong> @Model.CreateDate.ToString("yyyy-MM-dd HH:mm")</p>
 
-            <!-- Display Image -->
-            @if (!string.IsNullOrEmpty(Model.ImageFilename))
-            {
-                <div class="text-center mb-4">
-                    <img src="~/Images/@Model.ImageFilename" onerror="this.src='/Images/placeholder-image.jpg'" class="img-fluid" style="max-width: 100%; border-radius: 8px;" />
-                </div>
-            }
+            <!-- Display Image and Author Name (Main Discussion) -->
+            <div class="d-flex justify-content-center mb-4">
+                @if (Model.ApplicationUser != null)
+                {
+                    <img src="~/profile_img/@Model.ApplicationUser.ImageFilename" class="img-thumbnail" />
+                    <p class="align-self-center">
+                        <!-- Make the username clickable and link to their profile -->
+                        <a asp-action="Profile" asp-route-id="@Model.ApplicationUser.Id">@Model.ApplicationUser.Name</a>
+                    </p>
+                }
+            </div>
 
             <!-- Discussion Content -->
             <div class="text-center mb-4">
@@ -40,6 +44,12 @@
                 @foreach (var comment in Model.Comments)
                 {
                     <li class="list-group-item mb-3">
+                        <!-- Comment Author Info -->
+                        <div class="d-flex mb-2">
+                            <a asp-action="Profile" asp-route-id="@comment.ApplicationUser.Id">@comment.ApplicationUser.Name</a>
+                        </div>
+
+                        <!-- Comment Content -->
                         <p>@comment.Content</p>
                         <small class="text-muted">Posted on @comment.CreateDate.ToString("yyyy-MM-dd HH:mm")</small>
                     </li>

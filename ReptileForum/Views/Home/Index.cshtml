@@ -29,6 +29,20 @@
                                 </a>
                                 <p class="card-text mb-1">💬 @discussion.Comments.Count</p>
                                 <p class="card-text"><small class="text-muted">📅 @discussion.CreateDate.ToString("yyyy-MM-dd HH:mm")</small></p>
+
+                                <!-- Check if ApplicationUser exists and display the name -->
+                                @if (discussion.ApplicationUser != null)
+                                {
+                                    <p class="card-text">
+                                        <small class="text-muted">Posted by: <a asp-action="Profile" asp-route-id="@discussion.ApplicationUser.Id">@discussion.ApplicationUser.Name</a></small>
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="card-text">
+                                        <small class="text-muted">Posted by: Unknown User</small>
+                                    </p>
+                                }
                             </div>
                         </div>
                         <div class="col-md-4 d-flex justify-content-end align-items-center">

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using ReptileForum.Data;
 using ReptileForum.Models;
 
@@ -18,13 +15,16 @@ namespace ReptileForum.Controllers
     // GET: Comments/Delete/5
     // POST: Comments/Delete/5
 
+    [Authorize]
     public class CommentsController : Controller
     {
         private readonly ReptileForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CommentsController(ReptileForumContext context)
+        public CommentsController(ReptileForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Comments/Create
@@ -43,6 +43,7 @@ namespace ReptileForum.Controllers
         {
             if (ModelState.IsValid)
             {
+                comment.ApplicationUserId = _userManager.GetUserId(User);
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("GetDiscussion", "Home", new { id = comment.DiscussionId });

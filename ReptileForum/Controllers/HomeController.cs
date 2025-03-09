@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReptileForum.Data;
@@ -10,16 +11,19 @@ namespace ReptileForum.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ReptileForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, ReptileForumContext context)
+        public HomeController(ILogger<HomeController> logger, ReptileForumContext context, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
         {
             var discussions = _context.Discussion
+                .Include(d => d.ApplicationUser)
                 .Include(d => d.Comments)
                 .OrderByDescending(d => d.CreateDate)
                 .ToList();
@@ -30,7 +34,9 @@ namespace ReptileForum.Controllers
         public IActionResult GetDiscussion(int id)
         {
             var discussion = _context.Discussion
-                .Include(d => d.Comments) 
+                .Include(d => d.ApplicationUser)
+                .Include(d => d.Comments)
+                .ThenInclude(c => c.ApplicationUser)
                 .FirstOrDefault(d => d.DiscussionId == id);
 
             if (discussion == null)
@@ -41,6 +47,30 @@ namespace ReptileForum.Controllers
             discussion.Comments = discussion.Comments.OrderByDescending(c => c.CreateDate).ToList();
 
             return View(discussion);
+        }
+
+        public IActionResult Profile(string id)
+        {
+            // Fetch the ApplicationUser based on the passed ApplicationUserId
+            var user = _context.Users
+                .Where(u => u.Id == id)  
+                .FirstOrDefault();  
+
+            if (user == null)
+            {
+                return NotFound();  
+            }
+
+            // Now, fetch the discussions where the ApplicationUserId matches the user's ID
+            var discussions = _context.Discussion
+                .Where(d => d.ApplicationUserId == user.Id)  
+                .ToList();  
+
+            // Pass the user and their discussions to the view directly
+            ViewData["User"] = user;
+            ViewData["Discussions"] = discussions;
+
+            return View(); 
         }
 
 

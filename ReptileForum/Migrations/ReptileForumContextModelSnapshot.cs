@@ -242,6 +242,10 @@ namespace ReptileForum.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -253,6 +257,8 @@ namespace ReptileForum.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("CommentId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("DiscussionId");
 
@@ -266,6 +272,10 @@ namespace ReptileForum.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiscussionId"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -283,6 +293,8 @@ namespace ReptileForum.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DiscussionId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Discussion");
                 });
@@ -340,13 +352,32 @@ namespace ReptileForum.Migrations
 
             modelBuilder.Entity("ReptileForum.Models.Comment", b =>
                 {
+                    b.HasOne("ReptileForum.Data.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ReptileForum.Models.Discussion", "Discussion")
                         .WithMany("Comments")
                         .HasForeignKey("DiscussionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("ApplicationUser");
+
                     b.Navigation("Discussion");
+                });
+
+            modelBuilder.Entity("ReptileForum.Models.Discussion", b =>
+                {
+                    b.HasOne("ReptileForum.Data.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("ReptileForum.Models.Discussion", b =>

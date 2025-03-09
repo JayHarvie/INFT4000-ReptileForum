@@ -1,27 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ReptileForum.Data;
 using ReptileForum.Models;
 
 namespace ReptileForum.Controllers
 {
+    // Only logged in users can access
+    [Authorize]
     public class DiscussionsController : Controller
     {
         private readonly ReptileForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DiscussionsController(ReptileForumContext context)
+        public DiscussionsController(ReptileForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Discussions
         public async Task<IActionResult> Index()
         {
             var discussions = await _context.Discussion
-                    .Include(d => d.Comments)
-                    .OrderByDescending(d => d.CreateDate)
-                    .ToListAsync();
+                .Where(m => m.ApplicationUserId == _userManager.GetUserId(User))
+                .Include(d => d.ApplicationUser)  
+                .Include(d => d.Comments)
+                .OrderByDescending(d => d.CreateDate)
+                .ToListAsync();
+
 
             return View(discussions);
         }
@@ -35,6 +48,7 @@ namespace ReptileForum.Controllers
             }
 
             var discussion = await _context.Discussion
+                .Where(m => m.ApplicationUserId == _userManager.GetUserId(User))
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
             if (discussion == null)
             {
@@ -60,6 +74,8 @@ namespace ReptileForum.Controllers
         {
             if (ModelState.IsValid)
             {
+                // set the current user as the author of the discussion
+                discussion.ApplicationUserId = _userManager.GetUserId(User);
 
                 // Check if the user uploaded an image
                 if (discussion.ImageFile == null)
@@ -97,7 +113,9 @@ namespace ReptileForum.Controllers
                 return NotFound();
             }
 
-            var discussion = await _context.Discussion.FindAsync(id);
+            var discussion = await _context.Discussion
+                .Where(m => m.ApplicationUserId == _userManager.GetUserId(User))
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
             if (discussion == null)
             {
                 return NotFound();
@@ -121,6 +139,11 @@ namespace ReptileForum.Controllers
 
             if (ModelState.IsValid)
             {
+                // Ensure the current user is the owner of the discussion
+                if (discussion.ApplicationUserId != _userManager.GetUserId(User))
+                {
+                    return NotFound(); 
+                }
                 try
                 {
                     _context.Update(discussion);
@@ -151,6 +174,7 @@ namespace ReptileForum.Controllers
             }
 
             var discussion = await _context.Discussion
+                .Where(m => m.ApplicationUserId == _userManager.GetUserId(User))
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
             if (discussion == null)
             {
@@ -165,7 +189,11 @@ namespace ReptileForum.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var discussion = await _context.Discussion.FindAsync(id);
+
+            var discussion = await _context.Discussion
+                .Where(m => m.ApplicationUserId == _userManager.GetUserId(User))
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
+
             if (discussion != null)
             {
                 _context.Discussion.Remove(discussion);

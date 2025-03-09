@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ReptileForum.Data;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ReptileForum.Models
@@ -20,5 +21,10 @@ namespace ReptileForum.Models
 
         // Navigation Property: One-to-Many Relationship with Comments
         public List<Comment> Comments { get; set; } = new List<Comment>();
+        
+        public string ApplicationUserId { get; set; } = string.Empty; // Foreign Key
+
+        // Navigation Property: Reference to ApplicationUser
+        public ApplicationUser? ApplicationUser { get; set; } // nullable
     }
 }
